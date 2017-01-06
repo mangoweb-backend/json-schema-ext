@@ -1,0 +1,19 @@
+{
+	"name": "mangoweb/json-schema-ext",
+	"description": "utils for working with JSON Schema",
+	"license": "MIT",
+	"require": {
+		"php": "~7.1",
+		"nette/neon": "~2.4",
+		"nette/utils": "~2.4"
+	},
+	"require-dev": {
+		"nette/tester": "~2.0@dev",
+		"eloquent/phony": "~0.14.0",
+		"justinrainbow/json-schema": "~4.0",
+		"stefk/jval": "@dev"
+	},
+	"autoload": {
+		"classmap": ["src"]
+	}
+}
