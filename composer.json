@@ -9,7 +9,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "~2.0@dev",
-		"eloquent/phony": "~0.14.0",
+		"eloquent/phony": "~0.14.4",
 		"justinrainbow/json-schema": "~4.1",
 		"stefk/jval": "@dev"
 	},
