@@ -121,6 +121,87 @@ class SchemaValidatorTest extends TestCase
 	}
 
 
+	public function testValidateWithArraysInsteadOfStdClass()
+	{
+		$validator = $this->createValidator();
+
+		$schema = (object) [
+			'type' => 'object',
+		];
+
+		Assert::equal(
+			[new SchemaValidationError([], 'Array value found, but an object is required')],
+			$validator->validate([], $schema)
+		);
+
+		Assert::same(
+			[],
+			$validator->validate([], $schema, $validator::MODE_MAP_SUPPORTS_ARRAY)
+		);
+	}
+
+
+	public function testValidatorCoercionIntOk()
+	{
+		$validator = $this->createValidator();
+
+		$schema = (object) [
+			'type' => 'integer',
+		];
+
+		Assert::equal(
+			[new SchemaValidationError([], 'String value found, but an integer is required')],
+			$validator->validate('123', $schema)
+		);
+
+		Assert::same(
+			[],
+			$validator->validate('123', $schema, $validator::MODE_TYPE_CHECK_LOOSE)
+		);
+	}
+
+
+	public function testValidatorCoercionIntFail()
+	{
+		$validator = $this->createValidator();
+
+		$schema = (object) [
+			'type' => 'integer',
+		];
+
+		Assert::equal(
+			[new SchemaValidationError([], 'String value found, but an integer is required')],
+			$validator->validate('123x', $schema)
+		);
+
+		Assert::equal(
+			[new SchemaValidationError([], 'String value found, but an integer is required')],
+			$validator->validate('123x', $schema, $validator::MODE_TYPE_CHECK_LOOSE)
+		);
+	}
+
+
+//  waiting on https://github.com/justinrainbow/json-schema/pull/345 to be merged
+//	public function testValidatorCoercionBoolOk()
+//	{
+//		$validator = $this->createValidator();
+//
+//		$schema = (object) [
+//			'type' => 'boolean',
+//		];
+//
+//		Assert::equal(
+//			[new SchemaValidationError([], 'String value found, but a boolean is required')],
+//			$validator->validate('0', $schema)
+//		);
+//
+//		Assert::same(
+//			[],
+//			$validator->validate('0', $schema, $validator::MODE_TYPE_CHECK_LOOSE)
+//		);
+//	}
+
+
 	private function persistSchema(stdClass $schema, string $path): stdClass
 	{
 		FileSystem::write($path, Neon::encode($schema, Neon::BLOCK));
@@ -130,8 +211,7 @@ class SchemaValidatorTest extends TestCase
 
 	private function createValidator(): SchemaValidator
 	{
-		$factory = new SchemaValidatorFactory($this->schemaLoader);
-		$validator = $factory->create();
+		$validator = new SchemaValidator($this->schemaLoader);
 
 		return $validator;
 	}

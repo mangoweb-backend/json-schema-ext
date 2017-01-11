@@ -20,8 +20,12 @@ class SchemaValidator implements ISchemaValidator
 	}
 
 
-	public function validate($value, stdClass $schema): array
+	public function validate($value, stdClass $schema, int $mode = self::MODE_STANDARD): array
 	{
+		if ($mode !== self::MODE_STANDARD) {
+			throw new \LogicException('Not implemented');
+		}
+
 		$errors = $this->innerValidator->validate($value, $schema, $schema->id ?? '');
 
 		return array_map(
