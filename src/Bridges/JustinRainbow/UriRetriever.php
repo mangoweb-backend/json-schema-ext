@@ -35,19 +35,14 @@ class UriRetriever implements JsonSchema\UriRetrieverInterface
 	public function retrieve($uri, $baseUri = NULL): stdClass
 	{
 		$resolvedUri = $this->resolveUri($uri, $baseUri);
-
-		$pointer = new JsonSchema\Entity\JsonPointer($resolvedUri);
-		$fetchUri = $pointer->getFilename();
-		$propertyPathSegments = $pointer->getPropertyPaths();
-
-		if (!Strings::startsWith($fetchUri, 'file:///')) {
-			throw new JsonSchema\Exception\ResourceNotFoundException("Only local URIs are supported, '$fetchUri' given");
+		if (!Strings::startsWith($resolvedUri, 'file:///')) {
+			throw new JsonSchema\Exception\ResourceNotFoundException("Only local URIs are supported, '$resolvedUri' given");
 		}
 
-		$localSchemaPath = Helpers::uriToPath($fetchUri);
+		$localSchemaPath = Helpers::uriToPath($resolvedUri);
 
 		try {
-			return $this->loader->loadSchema($localSchemaPath, $propertyPathSegments);
+			return $this->loader->loadSchema($localSchemaPath);
 
 		} catch (FileNotFoundException $e) {
 			throw new JsonSchema\Exception\ResourceNotFoundException("File '$localSchemaPath' not found", 0, $e);
