@@ -13,6 +13,10 @@
 		"justinrainbow/json-schema": "~4.0",
 		"stefk/jval": "@dev"
 	},
+	"suggest": {
+		"justinrainbow/json-schema": "to use Mangoweb\\JsonSchemaExt\\Bridges\\JustinRainbow\\SchemaValidator",
+		"stefk/jval": "to use Mangoweb\\JsonSchemaExt\\Bridges\\Stefk\\SchemaValidator"
+	},
 	"autoload": {
 		"classmap": ["src"]
 	}
