@@ -73,6 +73,7 @@ class SchemaLoaderTest extends TestCase
 	public function testLoadSchemaWithPointer()
 	{
 		$this->loader->setAutoRefresh(FALSE);
+		$this->loader->setId(FALSE);
 		$schemaPath = "{$this->tempDir}/my-schema.neon";
 
 		$schemaA = $this->createSchemaA();

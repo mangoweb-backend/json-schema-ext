@@ -144,10 +144,6 @@ class SchemaLoader
 	{
 		$schema = $this->loadNeon($path);
 
-		if ($this->setId) {
-			$schema->id = Helpers::pathToUri($path);
-		}
-
 		foreach ($pointer as $segment) {
 			if (!isset($schema->$segment)) {
 				if ($required) {
@@ -160,6 +156,10 @@ class SchemaLoader
 			}
 
 			$schema = $schema->$segment;
+		}
+
+		if ($this->setId) {
+			$schema->id = Helpers::pathToUri($path);
 		}
 
 		if ($this->preprocessor !== NULL) {
