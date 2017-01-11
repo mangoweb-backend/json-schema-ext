@@ -104,19 +104,23 @@ class SchemaPreprocessor
 
 	private function applyToSubSchema(stdClass $schema): void
 	{
-		if (isset($schema->type) && in_array('object', (array) $schema->type, TRUE)) {
-			if (isset($schema->properties)) {
-				if ($this->allowOptionalConstraint && isset($schema->optional)) {
-					assert(is_array($schema->optional), 'The \'optional\' constraint must be an array of property names');
-					assert(!isset($schema->required), 'At most one of \'required\' and \'optional\' constraints can be defined');
-					$schema->required = array_values(array_diff(array_keys((array) $schema->properties), $schema->optional));
-					unset($schema->optional);
+		$isObject = isset($schema->type) && in_array('object', (array) $schema->type, TRUE);
+		$isPartialObject = isset($schema->properties);
 
-				} elseif ($this->requireAllPropertiesByDefault && !isset($schema->required)) {
-					$schema->required = array_keys((array) $schema->properties);
-				}
+		if ($isPartialObject) {
+			if ($this->allowOptionalConstraint && isset($schema->optional)) {
+				assert(is_array($schema->optional), 'The \'optional\' constraint must be an array of property names');
+				assert(!isset($schema->required), 'At most one of \'required\' and \'optional\' constraints can be defined');
+				$schema->required = array_values(array_diff(array_keys((array) $schema->properties), $schema->optional));
+				unset($schema->optional);
+
+			} elseif ($isObject && $this->requireAllPropertiesByDefault && !isset($schema->required)) {
+				$schema->required = array_keys((array) $schema->properties);
 			}
+		}
 
+
+		if ($isObject) {
 			if ($this->disallowAdditionalPropertiesByDefault && !isset($schema->additionalProperties)) {
 				$schema->additionalProperties = FALSE;
 				if (!isset($schema->properties)) {

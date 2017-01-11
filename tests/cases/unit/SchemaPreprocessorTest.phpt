@@ -107,6 +107,26 @@ class SchemaPreprocessorTest extends TestCase
 	}
 
 
+	public function testApplyOptionalConstraintToPartialObject()
+	{
+		$preprocessor = new SchemaPreprocessor;
+		$preprocessor->allowOptionalConstraint();
+
+		$schemaA = (object) [
+			'properties' => (object) [
+				'foo' => (object) [],
+				'bar' => (object) [],
+			],
+			'optional' => ['foo'],
+		];
+
+		$preprocessor->apply($schemaA);
+		Assert::same(['bar'], $schemaA->required);
+		Assert::true(!isset($schemaA->optional));
+		Assert::true(!isset($schemaA->additionalProperties));
+	}
+
+
 	public function testApplyWithBothRequiredAndOptionalConstraintsDefined()
 	{
 		$schemaA = (object) [
